@@ -5,8 +5,17 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
+      lint.linters.markdownlint.args = {
+        '-s',
+        '--disable',
+        'MD013',
+        'MD007',
+        '--', -- Required
+      }
+
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
+        go = { 'staticcheck' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
@@ -55,6 +64,10 @@ return {
           end
         end,
       })
+
+      vim.keymap.set('n', '<leader>l', function()
+        lint.try_lint()
+      end, { desc = 'Trigger linting for current file' })
     end,
   },
 }
